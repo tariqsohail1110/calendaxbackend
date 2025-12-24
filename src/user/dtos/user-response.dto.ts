@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { UserStatus } from "../../../utils/value-objects/user-status.vo";
+import { UserStatus } from "src/utils/value-objects/user-status.vo";
 // import { RoleResponseDto } from "../roles";
 // import { PermissionResponseDto } from "../permissions";
 // import { UserId } from "src/app/identity-and-access/domain/value-objects/user-id.vo";

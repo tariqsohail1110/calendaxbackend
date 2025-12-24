@@ -14,9 +14,9 @@ import {
   MaxLength,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { UserStatus } from "../../../utils/value-objects/user-status.vo";
-import { Email } from "../../../utils/value-objects/email.vo";
-import type { PlainPassword } from "../../../utils/value-objects/password.vo";
+import { UserStatus } from "src/utils/value-objects/user-status.vo";
+import { Email } from "src/utils/value-objects/email.vo";
+import type { PlainPassword } from "src/utils/value-objects/password.vo";
 
 const passwordRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
 export class CreateUserRequestDto {
@@ -81,10 +81,16 @@ export class CreateUserRequestDto {
     example: "+1-516-316-4146",
   })
   @IsNotEmpty()
+  @Matches(/^\+1-\d{3}-\d{3}-\d{4}$/, {
+    message: "Phone number must be in the format +1-516-316-4146",
+  })
   phoneNumber1: string;
 
   // @ApiPropertyOptional({ description: 'The secondary phone number of the user (optional)', required: false })
   @IsOptional()
+  @Matches(/^\+1-\d{3}-\d{3}-\d{4}$/, {
+    message: "Phone number must be in the format +1-516-316-4146",
+  })
   phoneNumber2: string;
 
   // @ApiPropertyOptional({ description: 'The number of failed login attempts (optional)', required: false })
