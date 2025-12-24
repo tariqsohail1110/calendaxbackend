@@ -52,6 +52,11 @@ export class UserServices{
     }
 
 
+    async getUserWithPI(){
+        return await this.userRepository.getUserWithPI(); 
+    }    
+
+
     async getUserByIdWithPI(id: number): Promise<User>{
         try{
             const user = await this.userRepository.getByIDWithPI(id);
@@ -87,6 +92,27 @@ export class UserServices{
 //     }
 
 
+    async createUser(payload: CreateUserRequestDto): Promise<User>{ // <= just for now
+        const exitingUser = await this.userRepository.getByEmail(payload.email);
+        if (exitingUser){ throw new EmailAlreadyExistsException();}
+        const newUser = await this.userRepository.create(payload);
+        // forEach(payload.roles, async (role) => {
+        //     const existingRole = await this.userRepository.getById(role);
+        //     if(!existingRole){ throw new NotFoundException('Role not found'); }
+        // })
+
+        // let userEntity = UserMapper.toCreateEntity(payload);
+        // payload.password = 'pasword' as PlainPassword;
+        // const hashedPassword = await this.hashingService.hashPlainPassword(payload.password);
+        // userEntity.password = hashedPassword;
+        // userEntity = await this.userRepository.create(userEntity);
+        // console.log(`User with email ${payload.email} created successfully.`);
+        // return userEntity;
+
+        return newUser;
+    }
+
+
 //     /**
 //    * Update user by id
 //    * @param id {number}
@@ -116,67 +142,42 @@ export class UserServices{
 
 
 
-        async deleteUser(id: User['id']): Promise<DeleteResult>{
-            let userEntity = await this.userRepository.getById(id);
-            if(!userEntity){
-                throw new NotFoundException();
+    async updateUser(id: number, payload: UpdateUserRequestDto /*UpdatePermissionGroupRequestDto*/):
+    Promise</*PermissionGroupResponseDto*/UpdateResult>{
+        try{
+            const user = await this.userRepository.getById(id);
+            if(!user){
+                throw new NotFoundException("User Not Found");
             }
-            try{
-                return await this.userRepository.delete(id);
-            }catch(error){
-                if(error instanceof TimeoutError){
-                    throw new RequestTimeoutException();
-                }else{
-                    throw new BadRequestException(error.message);
-                }
+            return await this.userRepository.update(id, payload);
+        }catch(error){
+            throw new BadRequestException(error.msg);
+        }
+        // const existingPermissionGroup = await this.permissionGroupService.getById(id);
+        // if(!existingPermissionGroup){ throw new BadRequestException('Permission Group not found');}
+        // let permissionGroupEntity = PermissionGroupMapper.toUpdateEntity
+        // (existingPermissionGroup, payload);
+        // permissionGroupEntity = await this.permissionGroupService.create
+        // (permissionGroupEntity);
+        // return PermissionGroupMapper.toDto(permissionGroupEntity);
+        // return " ";
+    }
+
+
+
+    async deleteUser(id: User['id']): Promise<DeleteResult>{
+        let userEntity = await this.userRepository.getById(id);
+        if(!userEntity){
+            throw new NotFoundException();
+        }
+        try{
+            return await this.userRepository.delete(id);
+        }catch(error){
+            if(error instanceof TimeoutError){
+                throw new RequestTimeoutException();
+            }else{
+                throw new BadRequestException(error.message);
             }
         }
-        
-
-        async getUserWithPI(){
-            return await this.userRepository.getUserWithPI(); 
-        }
-
-
-        async createUser(payload: CreateUserRequestDto): Promise<User>{ // <= just for now
-            const exitingUser = await this.userRepository.getByEmail(payload.email);
-            if (exitingUser){ throw new EmailAlreadyExistsException();}
-            const newUser = await this.userRepository.create(payload);
-            // forEach(payload.roles, async (role) => {
-            //     const existingRole = await this.userRepository.getById(role);
-            //     if(!existingRole){ throw new NotFoundException('Role not found'); }
-            // })
-
-            // let userEntity = UserMapper.toCreateEntity(payload);
-            // payload.password = 'pasword' as PlainPassword;
-            // const hashedPassword = await this.hashingService.hashPlainPassword(payload.password);
-            // userEntity.password = hashedPassword;
-            // userEntity = await this.userRepository.create(userEntity);
-            // console.log(`User with email ${payload.email} created successfully.`);
-            // return userEntity;
-
-            return newUser;
-        }
-
-
-        async updateUser(id: number, payload: UpdateUserRequestDto /*UpdatePermissionGroupRequestDto*/):
-        Promise</*PermissionGroupResponseDto*/UpdateResult>{
-            try{
-                const user = await this.userRepository.getById(id);
-                if(!user){
-                    throw new NotFoundException("User Not Found");
-                }
-                return await this.userRepository.update(id, payload);
-            }catch(error){
-                throw new BadRequestException(error.msg);
-            }
-            // const existingPermissionGroup = await this.permissionGroupService.getById(id);
-            // if(!existingPermissionGroup){ throw new BadRequestException('Permission Group not found');}
-            // let permissionGroupEntity = PermissionGroupMapper.toUpdateEntity
-            // (existingPermissionGroup, payload);
-            // permissionGroupEntity = await this.permissionGroupService.create
-            // (permissionGroupEntity);
-            // return PermissionGroupMapper.toDto(permissionGroupEntity);
-            // return " ";
-        }
+    }
 }

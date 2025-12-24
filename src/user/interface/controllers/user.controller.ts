@@ -71,7 +71,7 @@ export class UserController{
     })
     // @Permissions('user.view')
     @HttpCode(200)
-    async getUserwithPI(): Promise<any>{
+    async getUserwithPI(): Promise<User[] | null>{
         return await this.userServices.getUserWithPI();
     }
 
