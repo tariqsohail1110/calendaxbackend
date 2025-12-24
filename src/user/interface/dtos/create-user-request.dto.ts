@@ -14,9 +14,9 @@ import {
   MaxLength,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-// import { UserStatus } from "src/app/identity-and-access/domain/value-objects/user-status.vo";
-// import { Email } from "src/app/common/value-object/email";
-// import { PlainPassword } from "src/app/identity-and-access/domain/value-objects/password";
+import { UserStatus } from "../../../utils/value-objects/user-status.vo";
+import { Email } from "../../../utils/value-objects/email.vo";
+import type { PlainPassword } from "../../../utils/value-objects/password.vo";
 
 const passwordRegex = /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/;
 export class CreateUserRequestDto {
@@ -52,8 +52,7 @@ export class CreateUserRequestDto {
   })
   @IsNotEmpty()
   @IsEmail()
-  // email: Email;
-  email: string;
+  email: Email;
 
   @ApiProperty({
     description: "Is user PI",
@@ -70,8 +69,7 @@ export class CreateUserRequestDto {
 
   // @ApiProperty()
   @IsOptional()
-  // password: PlainPassword;
-  password: string;
+  password: PlainPassword;
 
   // @ApiProperty({ description: 'The date when the password expires (optional)', required: false })
   @IsOptional()
@@ -129,10 +127,10 @@ export class CreateUserRequestDto {
   @IsBoolean()
   isSuperUser: boolean;
 
-  // @ApiPropertyOptional({ description: 'The current status of the user (optional)', enum: UserStatus, required: false })
-  // @IsOptional()
-  // @IsEnum(UserStatus)
-  // status: UserStatus;
+  @ApiPropertyOptional({ description: 'The current status of the user (optional)', enum: UserStatus, required: false })
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status: UserStatus;
 
   // @ApiPropertyOptional({ description: 'A list of permissions assigned to the user (optional)', required: false, type: [Number], example: [1] })
   @IsOptional()

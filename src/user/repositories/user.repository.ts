@@ -7,8 +7,6 @@ import { permission } from "process";
 import tr from "zod/v4/locales/tr.js";
 import { UpdateResult } from "typeorm/browser";
 import { DeleteResult } from "typeorm/browser";
-import id from "zod/v4/locales/id.js";
-import { UserResponseDto } from "../interface/dtos";
 
 @Injectable()
 export class UserRepository{

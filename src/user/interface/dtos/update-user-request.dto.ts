@@ -13,8 +13,8 @@ import {
   MaxLength,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-// import { Email } from "src/app/common/value-object/email";
-// import { UserStatus } from "src/app/identity-and-access/domain/value-objects/user-status.vo";
+import { Email } from "../../../utils/value-objects/email.vo";
+import { UserStatus } from "../../../utils/value-objects/user-status.vo";
 
 export class UpdateUserRequestDto {
   @ApiProperty()
@@ -41,8 +41,7 @@ export class UpdateUserRequestDto {
   })
   @IsNotEmpty()
   @IsEmail()
-  // email: Email;
-  email: string;
+  email: Email;
 
   @ApiProperty({
     description: "The date and time when the email was verified",
@@ -116,9 +115,9 @@ export class UpdateUserRequestDto {
   @IsBoolean()
   isSuperUser: boolean;
 
-  // @IsOptional()
-  // @IsEnum(UserStatus)
-  // status: UserStatus;
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status: UserStatus;
 
   @IsOptional()
   @IsArray()

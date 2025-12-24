@@ -1,6 +1,6 @@
 import { BaseOrmEntity } from "src/utils/bse-orm/base.orm-entity";
 import { Column, Entity, OneToMany } from "typeorm";
-import { UserStatus } from "src/utils/enum/user-status.vo";
+import { UserStatus } from "src/utils/value-objects/user-status.vo";
 
 @Entity('users')
 export class User extends BaseOrmEntity{

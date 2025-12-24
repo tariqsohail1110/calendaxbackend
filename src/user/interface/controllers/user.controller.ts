@@ -11,13 +11,14 @@ import { Controller,
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
 import { UserServices } from "src/user/services/user.services";
-import { CreateUserRequestDto, UpdateUserRequestDto, UserResponseDto } from "../dtos";
 import { ApiPaginationQueries } from "src/utils/decorators/api-pagination-queries.decorator";
 import { PaginationRequest } from "src/utils/pagination/pagination-request.interface";
 import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
 import { string } from "zod";
+import { CreateUserRequestDto } from "../dtos/create-user-request.dto";
+import { UpdateUserRequestDto } from "../dtos/update-user-request.dto";
 // import { UserMapper } from "src/utils/mappers/users.mapper";
 
 @Controller('v1/users')
@@ -131,6 +132,4 @@ export class UserController{
     ): Promise<DeleteResult>{
         return await this.userServices.deleteUser(id);
     }
-
-    
 }

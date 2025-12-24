@@ -8,8 +8,8 @@ import { TimeoutError } from "rxjs";
 import { DeleteResult } from "typeorm";
 import { CreateUserRequestDto } from "../interface/dtos/create-user-request.dto";
 import { EmailAlreadyExistsException } from "src/utils/exceptions/email-already-exists.exception";
-import { UpdateUserRequestDto } from "../interface/dtos";
 import { UpdateResult } from "typeorm/browser";
+import { UpdateUserRequestDto } from "../interface/dtos/update-user-request.dto";
 
 @Injectable()
 export class UserServices{
@@ -131,14 +131,7 @@ export class UserServices{
                 }
             }
         }
-
-        //other services
-        // async createUser(payload: { userId: User['id'] }): Promise<User>{
-        //     const { userId } = payload;
-        //     const user = await this.userRepository.getById(userId);
-        //     return user;
-        // }
-
+        
 
         async getUserWithPI(){
             return await this.userRepository.getUserWithPI(); 
