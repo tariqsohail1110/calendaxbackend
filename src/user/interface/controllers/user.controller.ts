@@ -6,14 +6,18 @@ import { Controller,
     Post,
     Body,
     Put, 
-    Delete} from "@nestjs/common";
+    Delete,
+    Query} from "@nestjs/common";
+import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
-import { UserServices } from "src/user/services/user.services.ts";
+import { UserServices } from "src/user/services/user.services";
 import { CreateUserRequestDto, UpdateUserRequestDto, UserResponseDto } from "../dtos";
 import { ApiPaginationQueries } from "src/utils/decorators/api-pagination-queries.decorator";
 import { PaginationRequest } from "src/utils/pagination/pagination-request.interface";
-import { User } from "src/user/database/user.orm.ts";
+import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
+import { UpdateResult } from "typeorm/browser";
+import { string } from "zod";
 // import { UserMapper } from "src/utils/mappers/users.mapper";
 
 @Controller('v1/users')
@@ -59,6 +63,11 @@ export class UserController{
 
 
     @Get('/with-pi')
+    @ApiParam({
+        name: 'pi',
+        type: Number,
+        required: true
+    })
     // @Permissions('user.view')
     @HttpCode(200)
     async getUserwithPI(): Promise<any>{
@@ -66,10 +75,27 @@ export class UserController{
     }
 
 
+    @Get('/email')
+    @ApiQuery({
+        name: 'email',
+        type: String,
+        required: true
+    })
+    @HttpCode(200)
+    async getUserByEmail(@Query('email') email: User['email']): Promise<User>{
+        return await this.userServices.getUserByEmail(email);
+    }
+
+
     @Get('/:id')
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        required: true
+    })
     // @Permissions('user.view')
     @HttpCode(200)
-    async getUser(@Param('id', ParseIntPipe) id: User['id']): Promise<any>{
+    async getUser(@Param('id', ParseIntPipe) id: User['id']): Promise<User>{
         return await this.userServices.getUser(id);
     }
 
@@ -77,7 +103,7 @@ export class UserController{
     @Post('/')
     // @Permissions('user.add')
     @HttpCode(200)
-    async createUser(@Body() data: CreateUserRequestDto): Promise<any>{
+    async createUser(@Body() data: CreateUserRequestDto): Promise<User>{
         return await this.userServices.createUser(data);
     }
 
@@ -92,8 +118,8 @@ export class UserController{
     async updateUser(
         @Param('id') id: number,
         @Body() data: UpdateUserRequestDto
-    ): Promise<any>{
-        return await this.userServices.updateUser(id, /*data*/ null);
+    ): Promise<UpdateResult>{
+        return await this.userServices.updateUser(id, data);
     }
 
 

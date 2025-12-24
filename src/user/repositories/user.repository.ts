@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../database/user.orm.ts";
+import { User } from "../database/user.orm";
 import { DeepPartial, FindOptionsWhere, In, Repository } from "typeorm";
 import { PinoLoggerService } from "../../utils/logger/pinoLogger.service";
 import { permission } from "process";
@@ -8,59 +8,60 @@ import tr from "zod/v4/locales/tr.js";
 import { UpdateResult } from "typeorm/browser";
 import { DeleteResult } from "typeorm/browser";
 import id from "zod/v4/locales/id.js";
+import { UserResponseDto } from "../interface/dtos";
 
 @Injectable()
 export class UserRepository{
     constructor(
         @InjectRepository(User) private readonly userRepository: Repository<User>,
-        private readonly pinoLogger: PinoLoggerService,
+        // private readonly pinoLogger: PinoLoggerService,
         // private readonly paginationService: PaginationService
     ){};
 
-    private async loadUserPermissions(
-        user: User,
-        whereConditions: any,
-        whereParams: any
-    ): Promise<User>{
-        //Get all permissions through roles
-        const rolePermissions = await this.userRepository
-            .createQueryBuilder('user')
-            .leftJoin('user.roles', 'role')
-            .leftJoin('role.permissions', 'permission')
-            .where(whereConditions, whereParams)
-            .andWhere("permission.active = :active", { active: true })
-            .select([
-                'permission.id',
-                'permission.name',
-                'permission.slug',
-                'permission.description',
-                'permission.active',
-            ])
-            .getRawMany();
+    // private async loadUserPermissions(
+    //     user: User,
+    //     whereConditions: any,
+    //     whereParams: any
+    // ): Promise<User>{
+    //     //Get all permissions through roles
+    //     const rolePermissions = await this.userRepository
+    //         .createQueryBuilder('user')
+    //         .leftJoin('user.roles', 'role')
+    //         .leftJoin('role.permissions', 'permission')
+    //         .where(whereConditions, whereParams)
+    //         .andWhere("permission.active = :active", { active: true })
+    //         .select([
+    //             'permission.id',
+    //             'permission.name',
+    //             'permission.slug',
+    //             'permission.description',
+    //             'permission.active',
+    //         ])
+    //         .getRawMany();
 
         
-        //Get direct user permissions
-        const directPermissions = await this.userRepository
-            .createQueryBuilder('user')
-            .leftJoin('user.permissions', 'permission')
-            .where(whereConditions, whereParams)
-            .andWhere('permission.active = :active', { active: true })
-            .select([
-                'permission.id',
-                'permission.name',
-                'permission.slug',
-                'permission.description',
-                'permission.active',
-            ])
-            .getRawMany()
+    //     //Get direct user permissions
+    //     const directPermissions = await this.userRepository
+    //         .createQueryBuilder('user')
+    //         .leftJoin('user.permissions', 'permission')
+    //         .where(whereConditions, whereParams)
+    //         .andWhere('permission.active = :active', { active: true })
+    //         .select([
+    //             'permission.id',
+    //             'permission.name',
+    //             'permission.slug',
+    //             'permission.description',
+    //             'permission.active',
+    //         ])
+    //         .getRawMany()
 
-        //combine and duplicate permissions
-        const allPermissions = [...rolePermissions, ...directPermissions];
-        const uniquePermissions = allPermissions.filter(
-            (permission, index, self) =>
-                index ===
-                self.findIndex((p) => p.permission_id === permission.permission_id)
-        );
+    //     //combine and duplicate permissions
+    //     const allPermissions = [...rolePermissions, ...directPermissions];
+    //     const uniquePermissions = allPermissions.filter(
+    //         (permission, index, self) =>
+    //             index ===
+    //             self.findIndex((p) => p.permission_id === permission.permission_id)
+    //     );
 
         //attach permissions to user entity
         // user.permissions = Promise.resolve(
@@ -74,8 +75,8 @@ export class UserRepository{
         //         return permission;
         //     })
         // );
-        return user;
-    }
+    //     return user;
+    // }
 
 
     async getByIDWithPI(id: number): Promise</*OrmEntity<User>*/any>{
@@ -114,16 +115,17 @@ export class UserRepository{
     async getById(userId: User['id']): Promise</*OrmEntity<User> | null*/ any>{
         const user = await this.userRepository.findOne({
             where: { id: userId },
-            relations: ['roles', 'permissions'],
+            // relations: ['roles', 'permissions'],
         });
 
         if(!user){
             return null;
         }
 
-        return await this.loadUserPermissions(user, 'user.id = :userId', {
-            userId
-        });
+        // return await this.loadUserPermissions(user, 'user.id = :userId', {
+        //     userId
+        // });
+        return user;
     }
 
 
@@ -163,23 +165,24 @@ export class UserRepository{
     // };
 
 
-    async getByEmail(email: /*Email*/ any): Promise</*OrmEntity<User> | null*/ any>{
+    async getByEmail(email: /*Email*/ any): Promise</*OrmEntity<User> | null*/ User | null>{
         const user = await this.userRepository.findOne({
             where: {email: email},
-            relations: ['roles', 'permissions'],
+            // relations: ['roles', 'permissions'],
         });
 
         if(!user){
             return null;
         }
 
-        return await this.loadUserPermissions(user, 'user.email =: email', {
-            email,
-        });
+        // return await this.loadUserPermissions(user, 'user.email =: email', {
+        //     email,
+        // });
+        return user;
     }
 
 
-    async create(user: DeepPartial<User>): Promise</*OrmEntity<User> | null*/ any>{
+    async create(user: DeepPartial<User>): Promise</*OrmEntity<User> | null*/ User>{
         const newUser = this.userRepository.create(user);
         return await this.userRepository.save(newUser);
     }

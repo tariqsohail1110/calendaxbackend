@@ -1,21 +1,23 @@
 import { Injectable, NotFoundException, RequestTimeoutException } from "@nestjs/common";
 import { PinoLoggerService } from "src/utils/logger/pinoLogger.service";
-import { UserRepository } from "../repositories/user.repository.ts";
-import { BadRequestException } from "src/utils/exceptions/common.exceptions.js";
-import { User } from "../database/user.orm.ts";
-import { UserExistsException } from "src/utils/exceptions/user-exists.exception.js";
+import { UserRepository } from "../repositories/user.repository";
+import { BadRequestException } from "src/utils/exceptions/common.exceptions";
+import { User } from "../database/user.orm";
+import { UserExistsException } from "src/utils/exceptions/user-exists.exception";
 import { TimeoutError } from "rxjs";
 import { DeleteResult } from "typeorm";
-import { CreateUserRequestDto } from "../interface/dtos/create-user-request.dto.js";
-import { EmailAlreadyExistsException } from "src/utils/exceptions/email-already-exists.exception.js";
+import { CreateUserRequestDto } from "../interface/dtos/create-user-request.dto";
+import { EmailAlreadyExistsException } from "src/utils/exceptions/email-already-exists.exception";
+import { UpdateUserRequestDto } from "../interface/dtos";
+import { UpdateResult } from "typeorm/browser";
 
 @Injectable()
 export class UserServices{
     constructor(
-        private readonly logger: PinoLoggerService,
+        // private readonly logger: PinoLoggerService,
         private readonly userRepository: UserRepository
     ){
-        this.logger.setContext('User Service');
+        // this.logger.setContext('User Service');
     }
 
     // async getUsers(pagination: any): Promise<[questions: User[], total: number]>{
@@ -143,9 +145,10 @@ export class UserServices{
         }
 
 
-        async createUser(payload: CreateUserRequestDto): Promise<User | string>{ // <= just for now
-            // const exitingUser = await this.userRepository.getByEmail(payload.email);
-            // if (exitingUser){ throw new EmailAlreadyExistsException();}
+        async createUser(payload: CreateUserRequestDto): Promise<User>{ // <= just for now
+            const exitingUser = await this.userRepository.getByEmail(payload.email);
+            if (exitingUser){ throw new EmailAlreadyExistsException();}
+            const newUser = await this.userRepository.create(payload);
             // forEach(payload.roles, async (role) => {
             //     const existingRole = await this.userRepository.getById(role);
             //     if(!existingRole){ throw new NotFoundException('Role not found'); }
@@ -158,12 +161,22 @@ export class UserServices{
             // userEntity = await this.userRepository.create(userEntity);
             // console.log(`User with email ${payload.email} created successfully.`);
             // return userEntity;
-            return " ";
+
+            return newUser;
         }
 
 
-        async updateUser(id: number, payload: null /*UpdatePermissionGroupRequestDto*/):
-        Promise</*PermissionGroupResponseDto*/string>{
+        async updateUser(id: number, payload: UpdateUserRequestDto /*UpdatePermissionGroupRequestDto*/):
+        Promise</*PermissionGroupResponseDto*/UpdateResult>{
+            try{
+                const user = await this.userRepository.getById(id);
+                if(!user){
+                    throw new NotFoundException("User Not Found");
+                }
+                return await this.userRepository.update(id, payload);
+            }catch(error){
+                throw new BadRequestException(error.msg);
+            }
             // const existingPermissionGroup = await this.permissionGroupService.getById(id);
             // if(!existingPermissionGroup){ throw new BadRequestException('Permission Group not found');}
             // let permissionGroupEntity = PermissionGroupMapper.toUpdateEntity
@@ -171,6 +184,6 @@ export class UserServices{
             // permissionGroupEntity = await this.permissionGroupService.create
             // (permissionGroupEntity);
             // return PermissionGroupMapper.toDto(permissionGroupEntity);
-            return " ";
+            // return " ";
         }
 }
