@@ -10,7 +10,7 @@ import { Controller,
     Query} from "@nestjs/common";
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
-import { UserServices } from "src/user/services/user.services";
+import { UserServices } from "src/user/services/user.service";
 import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
