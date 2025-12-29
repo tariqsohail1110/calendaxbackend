@@ -9,7 +9,7 @@ import { EmailAlreadyExistsException } from "src/utils/exceptions/email-already-
 import { UpdateResult } from "typeorm/browser";
 
 @Injectable()
-export class UserServices{
+export class UserService{
     constructor(
         private readonly userRepository: UserRepository
     ){}
