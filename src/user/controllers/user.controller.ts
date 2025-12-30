@@ -10,7 +10,7 @@ import { Controller,
     Query} from "@nestjs/common";
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
-import { UserServices } from "src/user/services/user.service";
+import { UserService } from "src/user/services/user.service";
 import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
@@ -20,7 +20,7 @@ import { CreateUserRequestDto } from "../dtos/create-user-request.dto";
 @ApiTags('Users')
 export class UserController{
     constructor(
-        private readonly userServices: UserServices
+        private readonly userService: UserService
     ) {}
 
 
@@ -32,7 +32,7 @@ export class UserController{
         required: true })
     @HttpCode(200)
     async getUserwithPI(): Promise<User[] | null>{
-        return await this.userServices.getUserWithPI();
+        return await this.userService.getUserWithPI();
     }
 
 
@@ -44,7 +44,7 @@ export class UserController{
         required: true })
     @HttpCode(200)
     async getUserByEmail(@Query('email') email: User['email']): Promise<User>{
-        return await this.userServices.getUserByEmail(email);
+        return await this.userService.getUserByEmail(email);
     }
 
 
@@ -56,14 +56,14 @@ export class UserController{
         required: true })
     @HttpCode(200)
     async getUser(@Param('id', ParseIntPipe) id: User['id']): Promise<User>{
-        return await this.userServices.getUser(id);
+        return await this.userService.getUser(id);
     }
 
 
     @Post('/')
     @HttpCode(200)
     async createUser(@Body() data: CreateUserRequestDto): Promise<User>{
-        return await this.userServices.createUser(data);
+        return await this.userService.createUser(data);
     }
 
 
@@ -73,7 +73,7 @@ export class UserController{
         @Param('id') id: number,
         @Body() data: CreateUserRequestDto
     ): Promise<UpdateResult>{
-        return await this.userServices.updateUser(id, data);
+        return await this.userService.updateUser(id, data);
     }
 
 
@@ -82,6 +82,6 @@ export class UserController{
     async deleteUser(
         @Param('id', ParseIntPipe)id: number
     ): Promise<DeleteResult>{
-        return await this.userServices.deleteUser(id);
+        return await this.userService.deleteUser(id);
     }
 }

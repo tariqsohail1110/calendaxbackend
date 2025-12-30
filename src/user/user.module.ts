@@ -2,11 +2,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./database/user.orm";
 import { UserController } from "./controllers/user.controller";
 import { UserRepository } from "./repositories/user.repository";
-import { UserServices } from "./services/user.service";
+import { UserService } from "./services/user.service";
 import { Module } from "@nestjs/common";
 
 const controllers = [UserController];
-const services = [UserServices];
+const services = [UserService];
 const repositories = [UserRepository];
 
 @Module({
