@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "src/user/services/user.service";
-import { User } from "src/user/database/user.orm";
 import { UserNotFoundException } from "src/utils/exceptions/userNotFound.exception";
 import { BadRequestException } from "src/utils/exceptions/common.exceptions";
 import { JwtService } from "@nestjs/jwt";
