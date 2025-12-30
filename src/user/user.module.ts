@@ -15,6 +15,7 @@ const repositories = [UserRepository];
     ],
     controllers,
     providers: [...services, ...repositories],
+    exports: [UserService]
 })
 
 export class UserModule {}
