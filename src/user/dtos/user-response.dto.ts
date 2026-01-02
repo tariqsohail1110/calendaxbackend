@@ -19,7 +19,7 @@ export class UserResponseDto {
   lastFailedAttempt?: Date;
   lockedUntil?: Date;
   status: UserStatus;
-  isPatient: boolean;
+  isPatient: boolean | undefined;
   isAdmin: boolean;
   isPrincipalInvestigator: boolean;
   isSuperUser: boolean;
