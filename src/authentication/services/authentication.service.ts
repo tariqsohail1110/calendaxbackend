@@ -1,20 +1,37 @@
-import { Injectable } from "@nestjs/common";
-import { LoginService } from "./login.service";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PlainPassword } from "src/utils/value-objects/password.vo";
 import { JWTService } from "src/utils/commonservices/jwt.service";
 import { TokenDto } from "src/utils/commonDtos/token.dto";
-import id from "zod/v4/locales/id.js";
-import { boolean } from "zod";
+import { UserNotFoundException } from "src/utils/exceptions/userNotFound.exception";
+import { User } from "src/user/database/user.orm";
+import { UserService } from "src/user/services/user.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AuthenticationService {
     constructor(
-        private readonly loginService: LoginService,
-        private readonly jwtService: JWTService
+        private readonly jwtService: JWTService,
+        private readonly userService: UserService,
     ) {}
 
+
+    async logIn(email: string, pass: PlainPassword): Promise<User> {
+        try{
+            const user = await this.userService.getUserByEmail(email);
+            if (!user) {
+                throw new UserNotFoundException();
+            }
+            if (pass !== user.password){
+                throw new UnauthorizedException();
+            }
+            return user;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
     async verifyUser(email: string, pass: PlainPassword): Promise<TokenDto | null> {
-            const user = await this.loginService.logIn(email, pass);
+            const user = await this.logIn(email, pass);
             const accessToken = this.jwtService.generateAccesToken(user.id, email);
             const refreshToken = this.jwtService.generateRefreshToken(user.id, email);
             return{
@@ -39,5 +56,10 @@ export class AuthenticationService {
                 accessToken,
                 refreshToken
             };
+    }
+
+
+    async generateNewAccessToken (refreshToken: string) {
+        return await this.jwtService.refresh(refreshToken);
     }
 }
