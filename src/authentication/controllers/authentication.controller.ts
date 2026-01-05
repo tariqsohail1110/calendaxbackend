@@ -20,6 +20,7 @@ export class AuthenticationController {
     }
 
 
+    @skipAuth()
     @Post("/refresh")
     @HttpCode(200)
     newAccessToken(@Body() refreshTokenDto: RefreshTokenDto) {

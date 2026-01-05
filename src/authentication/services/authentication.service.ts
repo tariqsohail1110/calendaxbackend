@@ -5,7 +5,6 @@ import { TokenDto } from "src/utils/commonDtos/token.dto";
 import { UserNotFoundException } from "src/utils/exceptions/userNotFound.exception";
 import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
-import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AuthenticationService {
