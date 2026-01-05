@@ -7,8 +7,7 @@ import { Controller,
     Body,
     Put, 
     Delete,
-    Query,
-    UseGuards} from "@nestjs/common";
+    Query} from "@nestjs/common";
 import { ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "src/user/services/user.service";
@@ -16,7 +15,6 @@ import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
 import { CreateUserRequestDto } from "../dtos/create-user-request.dto";
-import { skipAuth } from "src/utils/decorators/skip-auth.decorator";
 
 @Controller('v1/users')
 @ApiTags('Users')
@@ -49,7 +47,6 @@ export class UserController{
         return await this.userService.getUserByEmail(email);
     }
 
-    // @skipAuth()
     @Get(':id')
     @ApiParam({ name: 'id',
         type: Number,
