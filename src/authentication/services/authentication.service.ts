@@ -5,6 +5,7 @@ import { TokenDto } from "src/utils/commonDtos/token.dto";
 import { UserNotFoundException } from "src/utils/exceptions/userNotFound.exception";
 import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthenticationService {
@@ -20,7 +21,9 @@ export class AuthenticationService {
             if (!user) {
                 throw new UserNotFoundException();
             }
-            if (pass !== user.password){
+            const isMatch = await bcrypt.compare(pass, user.password);
+            console.log(isMatch);
+            if (!isMatch){
                 throw new UnauthorizedException();
             }
             return user;

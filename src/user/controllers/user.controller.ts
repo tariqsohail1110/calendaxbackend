@@ -15,6 +15,7 @@ import { User } from "src/user/database/user.orm";
 import { DeleteResult } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
 import { CreateUserRequestDto } from "../dtos/create-user-request.dto";
+import { skipAuth } from "src/utils/decorators/skip-auth.decorator";
 
 @Controller('v1/users')
 @ApiTags('Users')
@@ -59,6 +60,7 @@ export class UserController{
     }
 
 
+    @skipAuth()
     @Post('/')
     @HttpCode(200)
     async createUser(@Body() data: CreateUserRequestDto): Promise<User>{

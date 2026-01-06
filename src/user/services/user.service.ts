@@ -7,11 +7,12 @@ import { DeleteResult } from "typeorm";
 import { CreateUserRequestDto } from "../dtos/create-user-request.dto";
 import { EmailAlreadyExistsException } from "src/utils/exceptions/email-already-exists.exception";
 import { UpdateResult } from "typeorm/browser";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService{
     constructor(
-        private readonly userRepository: UserRepository
+        private readonly userRepository: UserRepository,
     ){}
 
 
@@ -22,7 +23,6 @@ export class UserService{
                 throw new NotFoundException();
             }
             return user;
-            // return UserMapper.toDtoWithRelations(user);
         }catch(error){
             throw new BadRequestException(error.message);
         }
@@ -63,7 +63,12 @@ export class UserService{
     async createUser(payload: CreateUserRequestDto): Promise<User>{
         const exitingUser = await this.userRepository.getByEmail(payload.email);
         if (exitingUser){ throw new EmailAlreadyExistsException();}
-        const newUser = await this.userRepository.create(payload);
+        const hashedPass = await bcrypt.hash(payload.password, 10);
+        console.log(hashedPass);
+        const newUser = await this.userRepository.create({
+            ...payload,
+            password: hashedPass
+        });
         return newUser;
     }
 
