@@ -3,12 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { OTP, OtpPurpose, OtpStatus } from "../database/otp.entity";
 import { Email } from "src/utils/value-objects/email.vo";
+import { User } from "src/user/database/user.orm";
 
 @Injectable()
 export class OtpRepository {
     constructor(
         @InjectRepository(OTP) private readonly otpRepository: Repository<OTP>
-    ){}
+    ) {}
 
     async createOtp(payload: {
         email: Email;
@@ -22,7 +23,6 @@ export class OtpRepository {
             status: OtpStatus.PENDING,
         });
 
-        return this.otpRepository.save(otp);    
+        return this.otpRepository.save(otp);
     };
-    
 }

@@ -15,6 +15,6 @@ export class OtpController {
     @skipAuth()
     @Post('/generateOtp')
     generate(@Body() otpDto: OtpDto) {
-        return this.otpService.generateOtp(otpDto.email, otpDto.purpose)
+        return this.otpService.generateOtp(otpDto.email)
     }
 }

@@ -19,6 +19,10 @@ export class OTP {
     @PrimaryGeneratedColumn('uuid')
     id: number;
 
+
+    @Column()
+    userId: number;
+
     @Column()
     code: string;
 
