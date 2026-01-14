@@ -1,6 +1,9 @@
 import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import { Injectable, Req, UnauthorizedException } from "@nestjs/common";
+import { JwtService, JwtSignOptions } from "@nestjs/jwt";
+import { BadRequestException, Injectable, Req, UnauthorizedException } from "@nestjs/common";
+import { promisify } from "util";
+import { readFile } from "fs";
+import { join } from "path";
 
 export class JwtPayload {
     sub: string;
@@ -16,19 +19,35 @@ export class JWTService {
         private readonly configService: ConfigService
     ){}
 
-    generateAccesToken(id: number, email: string) {
-        const payload = {
-            sub: id,
-            email: email,
-            type: 'access'
-        }
-        return this.jwtService.sign(
-            payload,
-            {   
-                secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-                expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRES_IN'),
+
+    private readPublicKey(): Promise<String> {
+        return promisify(readFile)(join(__dirname, '../../../../pem-keys/pub-key.pem'), 'utf8');
+    }
+
+
+    private readPrivateKey(): Promise<String> {
+        return promisify(readFile)(join(__dirname, '../../../../pem-keys/private-key.pem'), 'utf8');
+    }
+
+    async generateAccesToken(id: number, email: string) {
+        try {
+            const key: String = await this.readPrivateKey();
+            if (!key) throw new BadRequestException('Token Generation Failed')
+            const payload = {
+                sub: id,
+                email: email,
+                type: 'access',
             }
-        )
+            const options = {
+                secret: key,
+                algorithm: 'RS256',
+                expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRES_IN')
+            } as any;
+            return this.jwtService.sign(
+                payload, options)
+        } catch (error) {
+            throw new BadRequestException("Failed to sign in!");
+        }
     }
 
 
@@ -63,7 +82,7 @@ export class JWTService {
                 payload.sub,
                 payload.email
             )
-            console.log(newAccessToken);
+            // console.log(newAccessToken);
 
             return {
                 newAccessToken

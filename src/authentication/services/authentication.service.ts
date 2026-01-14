@@ -6,6 +6,7 @@ import { UserNotFoundException } from "src/utils/exceptions/userNotFound.excepti
 import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
 import * as bcrypt from 'bcrypt';
+import { string } from "zod";
 
 @Injectable()
 export class AuthenticationService {
@@ -34,7 +35,7 @@ export class AuthenticationService {
 
     async verifyUser(email: string, pass: PlainPassword): Promise<TokenDto | null> {
             const user = await this.logIn(email, pass);
-            const accessToken = this.jwtService.generateAccesToken(user.id, email);
+            const accessToken = await this.jwtService.generateAccesToken(user.id, email);
             const refreshToken = this.jwtService.generateRefreshToken(user.id, email);
             return{
                 id: user.id,
