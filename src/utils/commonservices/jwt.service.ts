@@ -20,7 +20,7 @@ export class JWTService {
     ){}
 
 
-    private readPublicKey(): Promise<String> {
+    readPublicKey(): Promise<String> {
         return promisify(readFile)(join(__dirname, '../../../../pem-keys/pub-key.pem'), 'utf8');
     }
 
@@ -52,17 +52,21 @@ export class JWTService {
 
 
     generateRefreshToken(id: number, email: string) {
-        const payload = {
-            sub: id,
-            email: email,
-            type: 'refresh'
+        try{
+            const payload = {
+                sub: id,
+                email: email,
+                type: 'refresh'
+            }
+            const options = {
+                secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+                expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRES_IN')
+            }
+            return this.jwtService.sign(
+            payload, options)
+        } catch (error) {
+            throw new BadRequestException("Failed to generate refresh token")
         }
-        return this.jwtService.sign(
-            payload,
-            {            
-            secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-            expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRES_IN'),
-        })
     }
 
 
@@ -70,7 +74,7 @@ export class JWTService {
         try{
             const payload = await this.jwtService.verifyAsync(refreshToken,
             {
-                secret: this.configService.get<string>('JWT_REFRESH_SECRET')
+                secret: this.configService.get<string>('JWT_REFRESH_SECRET'), 
             }
             )
 
@@ -78,11 +82,10 @@ export class JWTService {
                 throw new UnauthorizedException("Invalid Token Type");
             }
             
-            const newAccessToken = this.generateAccesToken(
+            const newAccessToken = await this.generateAccesToken(
                 payload.sub,
                 payload.email
             )
-            // console.log(newAccessToken);
 
             return {
                 newAccessToken

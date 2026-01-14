@@ -6,7 +6,6 @@ import { UserNotFoundException } from "src/utils/exceptions/userNotFound.excepti
 import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
 import * as bcrypt from 'bcrypt';
-import { string } from "zod";
 
 @Injectable()
 export class AuthenticationService {
@@ -23,7 +22,7 @@ export class AuthenticationService {
                 throw new UserNotFoundException();
             }
             const isMatch = await bcrypt.compare(pass, user.password);
-            console.log(isMatch);
+            console.log("Password Matched");
             if (!isMatch){
                 throw new UnauthorizedException();
             }
