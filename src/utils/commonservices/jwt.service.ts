@@ -1,6 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
-import { BadRequestException, Injectable, Req, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { join } from "path";
