@@ -51,17 +51,19 @@ export class JWTService {
     }
 
 
-    generateRefreshToken(id: number, email: string) {
+    async generateRefreshToken(id: number, email: string) {
         try{
+            const key: String = await this.readPrivateKey();
             const payload = {
                 sub: id,
                 email: email,
                 type: 'refresh'
             }
             const options = {
-                secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+                secret: key,
+                algorithm: 'RS256',
                 expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRES_IN')
-            }
+            } as any
             return this.jwtService.sign(
             payload, options)
         } catch (error) {
@@ -74,8 +76,8 @@ export class JWTService {
         try{
             const payload = await this.jwtService.verifyAsync(refreshToken,
             {
-                secret: this.configService.get<string>('JWT_REFRESH_SECRET'), 
-            }
+                secret: this.readPublicKey(), 
+            } as any
             )
 
             if (payload.type !== 'refresh') {

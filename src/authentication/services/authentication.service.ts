@@ -35,7 +35,7 @@ export class AuthenticationService {
     async verifyUser(email: string, pass: PlainPassword): Promise<TokenDto | null> {
             const user = await this.logIn(email, pass);
             const accessToken = await this.jwtService.generateAccesToken(user.id, email);
-            const refreshToken = this.jwtService.generateRefreshToken(user.id, email);
+            const refreshToken = await this.jwtService.generateRefreshToken(user.id, email);
             return{
                 id: user.id,
                 firstName: user.firstName,
