@@ -8,7 +8,7 @@ import { Controller,
     Put, 
     Delete,
     Query} from "@nestjs/common";
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiParam} from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "src/user/services/user.service";
 import { User } from "src/user/database/user.orm";

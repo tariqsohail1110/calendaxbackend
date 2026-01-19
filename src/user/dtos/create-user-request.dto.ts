@@ -1,5 +1,4 @@
 import {
-  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsDateString,
@@ -9,7 +8,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Length,
   Matches,
   MaxLength,
 } from "class-validator";
@@ -30,7 +28,6 @@ export class CreateUserRequestDto {
   @IsString()
   firstName: string;
 
-  // @ApiPropertyOptional({ description: 'The middle name of the user', maxLength: 100, required: false })
   @IsOptional()
   @MaxLength(100)
   @IsString()
@@ -62,16 +59,12 @@ export class CreateUserRequestDto {
   @IsBoolean()
   isPrincipalInvestigator: boolean;
 
-  // @ApiPropertyOptional({ description: 'The date when the email was verified (optional)', required: false })
-  @IsOptional()
   @IsDateString()
   emailVerifiedAt?: Date;
 
-  // @ApiProperty()
   @IsOptional()
   password: PlainPassword;
 
-  // @ApiProperty({ description: 'The date when the password expires (optional)', required: false })
   @IsOptional()
   @IsDateString()
   passwordExpiresAt: Date;
@@ -86,49 +79,40 @@ export class CreateUserRequestDto {
   })
   phoneNumber1: string;
 
-  // @ApiPropertyOptional({ description: 'The secondary phone number of the user (optional)', required: false })
   @IsOptional()
   @Matches(/^\+1-\d{3}-\d{3}-\d{4}$/, {
     message: "Phone number must be in the format +1-516-316-4146",
   })
   phoneNumber2: string;
 
-  // @ApiPropertyOptional({ description: 'The number of failed login attempts (optional)', required: false })
   @IsOptional()
   @IsInt()
   failedAttempts?: number;
 
-  // @ApiPropertyOptional({ description: 'Whether the user’s password has been reset (optional)', required: false })
   @IsOptional()
   @IsBoolean()
   isPasswordReset?: boolean;
 
-  // @ApiPropertyOptional({ description: 'Whether notifications are enabled for the user (optional)', required: false })
   @IsOptional()
   @IsBoolean()
   isNotificationEnabled?: boolean;
 
-  // @ApiPropertyOptional({ description: 'The date of the last failed login attempt (optional)', required: false })
   @IsOptional()
   @IsDateString()
   lastFailedAttempt?: Date;
 
-  // @ApiPropertyOptional({ description: 'The date until the user’s account is locked (optional)', required: false })
   @IsOptional()
   @IsDateString()
   lockedUntil?: Date;
 
-  // @ApiPropertyOptional({ description: 'Whether the user is a patient (optional)', required: false })
   @IsOptional()
   @IsBoolean()
   isPatient: boolean;
 
-  // @ApiPropertyOptional({ description: 'Whether the user is an admin (optional)', required: false })
   @IsOptional()
   @IsBoolean()
   isAdmin: boolean;
 
-  // @ApiPropertyOptional({ description: 'Whether the user is a superuser (optional)', required: false })
   @IsOptional()
   @IsBoolean()
   isSuperUser: boolean;
@@ -138,13 +122,11 @@ export class CreateUserRequestDto {
   @IsEnum(UserStatus)
   status: UserStatus;
 
-  // @ApiPropertyOptional({ description: 'A list of permissions assigned to the user (optional)', required: false, type: [Number], example: [1] })
   @IsOptional()
   @IsArray()
   @IsInt({ each: true })
   permissions: number[];
 
-  // @ApiProperty({ description: 'A list of roles assigned to the user', type: [Number], example: [1] })
   @IsOptional()
   @IsArray()
   @IsInt({ each: true })

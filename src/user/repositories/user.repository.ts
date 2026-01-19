@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../database/user.orm";
-import { DeepPartial, FindOptionsWhere, In, Repository } from "typeorm";
+import { DeepPartial, In, Repository } from "typeorm";
 import { UpdateResult } from "typeorm/browser";
 import { DeleteResult } from "typeorm/browser";
 
@@ -44,7 +44,7 @@ export class UserRepository{
     }
 
 
-    async getById(userId: User['id']): Promise</*OrmEntity<User> | null*/ any>{
+    async getById(userId: User['id']): Promise<any>{
         const user = await this.userRepository.findOne({
             where: { id: userId },
         });
@@ -56,7 +56,7 @@ export class UserRepository{
     }
 
 
-    async getByEmail(email: /*Email*/ any): Promise</*OrmEntity<User> | null*/ User | null>{
+    async getByEmail(email: any): Promise<User | null>{
         const user = await this.userRepository.findOne({
             where: {email: email},
         });
@@ -68,7 +68,7 @@ export class UserRepository{
     }
 
 
-    async create(user: DeepPartial<User>): Promise</*OrmEntity<User> | null*/ User>{
+    async create(user: DeepPartial<User>): Promise<User>{
         const newUser = this.userRepository.create(user);
         return await this.userRepository.save(newUser);
     }
