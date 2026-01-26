@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ContactModule } from './contact/contact.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticationModule } from './authentication/authentication.module';
+import { AuthenticationModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './utils/guards/auth.guard';
@@ -16,7 +15,6 @@ import { OtpModule } from './otp/otp.module';
       isGlobal: true,
       envFilePath: '.env'
     }),
-    ContactModule,
     UserModule,
     AuthenticationModule,
     OtpModule,
