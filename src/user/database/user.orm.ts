@@ -2,6 +2,7 @@ import { BaseOrmEntity } from "src/utils/bse-orm/base.orm-entity";
 import { Column, Entity, OneToMany } from "typeorm";
 import { UserStatus } from "src/utils/value-objects/user-status.vo";
 import type { PlainPassword } from "src/utils/value-objects/password.vo";
+import { Exclude } from "class-transformer";
 
 @Entity('users')
 export class User extends BaseOrmEntity{
@@ -45,6 +46,7 @@ export class User extends BaseOrmEntity{
     })
     emailVerifiedAt?: Date;
 
+    @Exclude()
     @Column({
         name: 'password',
         type: 'varchar',
