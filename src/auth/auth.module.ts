@@ -5,6 +5,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { JWTService } from "src/utils/commonservices/jwt.service";
 import { AuthenticationService } from "./services/auth.service";
+import { OtpModule } from "src/otp/otp.module";
 
 const controllers = [AuthenticationController];
 const services = [AuthenticationService, JWTService];
@@ -13,6 +14,7 @@ const services = [AuthenticationService, JWTService];
     imports: [
         UserModule,
         ConfigModule,
+        OtpModule,
         JwtModule.register({})
     ],
     controllers,
