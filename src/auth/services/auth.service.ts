@@ -7,17 +7,19 @@ import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
 import * as bcrypt from 'bcrypt';
 import { plainToClass } from "class-transformer";
-import tr from "zod/v4/locales/tr.js";
+import { OtpService } from "src/otp/services/otp.service";
+import { OtpPurpose } from "src/otp/database/otp.entity";
 
 @Injectable()
 export class AuthenticationService {
     constructor(
         private readonly jwtService: JWTService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly otpService: OtpService,
     ) {}
 
 
-    async logIn(email: string, pass: PlainPassword): Promise<User> {
+    async logIn(email: string, pass: PlainPassword): Promise<string> {
         try{
             const user = await this.userService.getUserByEmail(email);
             if (!user) {
@@ -27,14 +29,28 @@ export class AuthenticationService {
             if (!isMatch){
                 throw new UnauthorizedException();
             }
-            return user;
+
+            await this.otpService.sendOtp(
+                user.id,
+                user.email,
+                user.firstName || user.email,
+                OtpPurpose.VERIFICATION,
+            )
+            return 'Otp has been sent to your email';
         } catch (error) {
             throw new BadRequestException(error.message);
         }
     }
 
-    async verifyUser(email: string, pass: PlainPassword): Promise<TokenDto | null> {
-            const user = await this.logIn(email, pass);
+    async verifyUser(email: string, otp: string): Promise<TokenDto | null> {
+            const user = await this.userService.getUserByEmail(email);
+
+            await this.otpService.verifyAndConsume(
+                user.id,
+                otp,
+                OtpPurpose.VERIFICATION,
+            )
+
             const [accessToken, refreshToken] = await Promise.all([this.jwtService.generateAccesToken(user.id, email),
                 this.jwtService.generateRefreshToken(user.id, email)]);
             const { password, passwordExpiresAt, deletedAt, createdAt, updatedAt,  ...userDto } = user; 
