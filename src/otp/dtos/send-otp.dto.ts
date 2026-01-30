@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { Email } from "src/utils/value-objects/email.vo";
 import { OtpPurpose } from "../database/otp.entity";
 import { ApiProperty } from "@nestjs/swagger";
@@ -10,10 +10,13 @@ export class OtpDto {
     })
     @IsNotEmpty()
     @IsEmail()
-    email: Email;
+    email: string;
 
-
-    // @IsNotEmpty()
-    // @IsString()
-    // purpose: OtpPurpose
+    
+    @ApiProperty({
+        description: 'Otp type',
+        example: 'verification'
+    })
+    @IsEnum(OtpPurpose)
+    purpose: OtpPurpose;
 }

@@ -1,5 +1,6 @@
+import { User } from "src/user/database/user.orm";
 import { Email } from "src/utils/value-objects/email.vo";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export enum OtpPurpose {
     GENERAL = 'general',
@@ -50,13 +51,22 @@ export class OTP {
 
 
     @Column()
-    createdAt: Date
+    createdAt: Date;
 
 
     @Column()
-    expiredAt: Date
+    expiredAt: Date;
 
 
-    // @Column()
-    // deletedAt: Date
+    @ManyToOne(() => User, {onDelete: 'CASCADE'})
+    @JoinColumn({name: 'userId'})
+    user: User;
+
+
+    @Column({default: false})
+    isUsed: boolean;
+
+
+    @Column({default: 0})
+    attempts: number;
 }
