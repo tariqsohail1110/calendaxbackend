@@ -1,8 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { OtpRepository } from "../repositories/otp.repository";
 import { OtpPurpose } from "../database/otp.entity";
-import { ConfigService } from "@nestjs/config";
-import * as bcrypt from 'bcrypt';
 import { EmailService } from "src/utils/commonservices/email.service";
 
 @Injectable()
@@ -19,19 +17,18 @@ export class OtpService {
     private generateOtp(): string {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         return code;
-    };
-    
-
-    private async hashOtp(code : string): Promise<string> {
-        return bcrypt.hash(code, 10);
-    } 
+    }; 
 
 
     private async verifyOtp(
-        plainCode: string,
-        hashedCode: string,
+        code: string,
+        storedCode: string,
     ): Promise<boolean> {
-        return bcrypt.compare(plainCode, hashedCode);
+        const compare = code.trim() === storedCode
+        console.log(`Before: ${code}, ${storedCode}`);
+        console.log(compare);
+        console.log(`After: ${code}, ${storedCode}`);
+        return compare; 
     }
 
 
@@ -56,12 +53,12 @@ export class OtpService {
         await this.otpRepository.deleteUserOtps(userId, purpose);
 
         const code = this.generateOtp();
-        const hashedCode = await this.hashOtp(code);
+        // const hashedCode = await this.hashOtp(code);
 
         await this.otpRepository.createOtp(
             userId,
             email,
-            hashedCode,
+            code,
             purpose,
             this.OTP_EXPIRY_MINUTES,
         );

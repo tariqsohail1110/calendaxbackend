@@ -3,7 +3,6 @@ import { PlainPassword } from "src/utils/value-objects/password.vo";
 import { JWTService } from "src/utils/commonservices/jwt.service";
 import { TokenDto } from "src/auth/dtos/token.dto";
 import { UserNotFoundException } from "src/utils/exceptions/userNotFound.exception";
-import { User } from "src/user/database/user.orm";
 import { UserService } from "src/user/services/user.service";
 import * as bcrypt from 'bcrypt';
 import { plainToClass } from "class-transformer";
