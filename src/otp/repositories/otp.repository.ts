@@ -80,7 +80,7 @@ export class OtpRepository {
         await this.otpRepository.delete({
             userId,
             purpose,
-            isUsed: false,
+            isUsed: true,
         });
     };
 
