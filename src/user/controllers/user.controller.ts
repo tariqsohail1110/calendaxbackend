@@ -6,8 +6,7 @@ import { Controller,
     Post,
     Body,
     Put, 
-    Delete,
-    Query} from "@nestjs/common";
+    Delete} from "@nestjs/common";
 import { ApiParam} from '@nestjs/swagger';
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "src/user/services/user.service";
@@ -44,7 +43,7 @@ export class UserController{
         example: 'user@mail.com',
         required: true })
     @HttpCode(200)
-    async getUserByEmail(@Query('email') email: User['email']): Promise<User>{
+    async getUserByEmail(@Param('email') email: User['email']): Promise<User>{
         return await this.userService.getUserByEmail(email);
     }
 
